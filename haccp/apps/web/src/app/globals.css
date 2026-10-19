@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    background-image:
+      radial-gradient(900px 500px at 100% -10%, rgba(205, 174, 103, 0.14), transparent 60%),
+      radial-gradient(700px 400px at -10% 110%, rgba(181, 87, 58, 0.06), transparent 60%);
+    background-attachment: fixed;
+  }
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+  }
+  .font-display {
+    font-variant-numeric: lining-nums;
+  }
+  ::selection {
+    @apply bg-gold-300 text-ink-900;
+  }
+}
+
+@layer components {
+  .eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.28em] text-ink-500;
+  }
+  .ornament {
+    @apply h-px w-full bg-gradient-to-r from-gold-500/70 via-gold-400/20 to-transparent;
+  }
+}
+
+@media print {
+  aside,
+  header,
+  nav,
+  [data-no-print] {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+  .print-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd;
+    break-inside: avoid;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
