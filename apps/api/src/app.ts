@@ -56,3 +56,7 @@ export function createApp() {
   app.use(errorHandler);
   return app;
 }
+
+// 👇 Instance exportée par défaut : c'est ce que Vercel attend.
+const app = createApp();
+export default app;
