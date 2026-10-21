@@ -7,6 +7,7 @@ import pinoHttp from "pino-http";
 import mongoose from "mongoose";
 import { corsOrigins, env } from "./config/env";
 import { logger } from "./config/logger";
+import { ensureDb } from "./config/db";
 import api from "./routes";
 import { errorHandler, notFoundHandler } from "./middleware/error";
 
@@ -46,17 +47,31 @@ export function createApp() {
     })
   );
 
-  app.get("/health", (_req, res) => {
+  app.get("/health", async (_req, res) => {
+    try {
+      await ensureDb();
+    } catch (err) {
+      logger.error({ err }, "Connexion MongoDB impossible");
+    }
     const ready = mongoose.connection.readyState === 1;
     res.status(ready ? 200 : 503).json({ status: ready ? "ok" : "degraded", db: ready ? "up" : "down", uptime: Math.round(process.uptime()) });
   });
 
-  app.use("/api/v1", api);
+  // Garantit la connexion à MongoDB avant toute route de l'API (cold start Vercel).
+  app.use("/api/v1", async (_req, _res, next) => {
+    try {
+      await ensureDb();
+      next();
+    } catch (err) {
+      next(err);
+    }
+  }, api);
+
   app.use(notFoundHandler);
   app.use(errorHandler);
   return app;
 }
 
-// 👇 Instance exportée par défaut : c'est ce que Vercel attend.
+// Instance exportée par défaut : c'est ce que Vercel attend.
 const app = createApp();
 export default app;
