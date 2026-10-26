@@ -1,9 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Loader2, Plus } from "lucide-react";
 import { Topbar } from "@/components/layout/topbar";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { TaskRow } from "@/components/nettoyage/task-row";
+import { TaskForm } from "@/components/nettoyage/task-form";
 import { ErrorBox, InlineError, Loading } from "@/components/ui/state";
 import { useApi } from "@/hooks/use-api";
 import { api, errorMessage } from "@/lib/api";
@@ -33,6 +36,40 @@ export default function NettoyagePage() {
   // Cocher : tout opérateur autorisé. Décocher : réservé aux responsables (règle de l'API).
   const canCheck = can("nettoyage", "write");
   const canUncheck = canCheck && !!user && ["manager", "admin", "super_admin"].includes(user.role);
+  // Créer / modifier / supprimer un modèle de tâche : responsables et au-dessus (règle de l'API).
+  const canManage = canUncheck;
+
+  const [formOpen, setFormOpen] = useState(false);
+  const [editing, setEditing] = useState<CleaningTask | null>(null);
+  const [deleting, setDeleting] = useState<CleaningTask | null>(null);
+  const [deleteBusy, setDeleteBusy] = useState(false);
+
+  const openCreate = () => {
+    setEditing(null);
+    setFormOpen(true);
+  };
+  const openEdit = (t: CleaningTask) => {
+    setEditing(t);
+    setFormOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleting) return;
+    const path = ep(`/cleaning/${deleting.id}`);
+    if (!path) return;
+    setDeleteBusy(true);
+    setActionError(null);
+    try {
+      await api(path, { method: "DELETE" });
+      setDeleting(null);
+      reload();
+    } catch (err) {
+      setActionError(errorMessage(err));
+      setDeleting(null);
+    } finally {
+      setDeleteBusy(false);
+    }
+  };
 
   useEffect(() => {
     // Heure locale de l'établissement (et non celle du navigateur) pour détecter les retards
@@ -84,6 +121,11 @@ export default function NettoyagePage() {
           <p className="eyebrow">Plan de nettoyage</p>
           <h1 className="mt-1 font-display text-4xl font-semibold md:text-5xl">Nettoyage</h1>
           <div className="ornament mt-4 max-w-xs" />
+          {canManage && (
+            <Button onClick={openCreate} className="mt-5">
+              <Plus size={16} strokeWidth={1.75} /> Ajouter une tâche
+            </Button>
+          )}
         </div>
 
         <Card className="p-5 md:p-6">
@@ -127,7 +169,14 @@ export default function NettoyagePage() {
         ) : error ? (
           <ErrorBox message={error} onRetry={reload} />
         ) : zones.length === 0 ? (
-          <Card className="p-8 text-center text-sm text-ink-500">Aucune tâche à afficher.</Card>
+          <Card className="p-8 text-center text-sm text-ink-500">
+            <p>{tasks.length === 0 ? "Aucune tâche dans le plan de nettoyage." : "Aucune tâche à afficher."}</p>
+            {tasks.length === 0 && canManage && (
+              <Button onClick={openCreate} className="mt-4">
+                <Plus size={16} strokeWidth={1.75} /> Créer la première tâche
+              </Button>
+            )}
+          </Card>
         ) : (
           zones.map((zone) => (
             <section key={zone}>
@@ -143,6 +192,8 @@ export default function NettoyagePage() {
                       tz={tz}
                       disabled={pendingId === t.id || (t.done ? !canUncheck : !canCheck)}
                       onToggle={toggle}
+                      onEdit={canManage ? openEdit : undefined}
+                      onDelete={canManage ? setDeleting : undefined}
                     />
                   ))}
               </Card>
@@ -150,6 +201,56 @@ export default function NettoyagePage() {
           ))
         )}
       </main>
+
+      <TaskForm
+        open={formOpen}
+        task={editing}
+        zones={Array.from(new Set(tasks.map((t) => t.zone))).sort()}
+        onClose={() => setFormOpen(false)}
+        onSaved={() => {
+          reload();
+          refreshAlerts();
+        }}
+      />
+
+      {deleting && (
+        <>
+          <div className="fixed inset-0 z-40 bg-ink-950/60 backdrop-blur-sm" onClick={() => !deleteBusy && setDeleting(null)} />
+          <div
+            role="alertdialog"
+            aria-modal="true"
+            aria-labelledby="delete-task-title"
+            className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-gold-500/20 bg-ink-900 bg-ink-glow p-6 text-ivory-100 shadow-lux"
+          >
+            <p className="eyebrow !text-gold-300">Confirmation</p>
+            <h3 id="delete-task-title" className="mt-1 text-2xl font-semibold">
+              Supprimer cette tâche ?
+            </h3>
+            <div className="ornament mt-3 w-20" />
+            <p className="mt-4 text-sm leading-relaxed text-ivory-200">
+              « {deleting.title} » disparaîtra du plan de nettoyage. L&apos;historique des validations déjà
+              enregistrées reste conservé.
+            </p>
+            <div className="mt-6 flex gap-3">
+              <Button
+                variant="secondary"
+                onClick={() => setDeleting(null)}
+                disabled={deleteBusy}
+                className="flex-1 !border-ivory-100/30 !text-ivory-100 hover:!bg-ivory-100 hover:!text-ink-900"
+              >
+                Annuler
+              </Button>
+              <button
+                onClick={confirmDelete}
+                disabled={deleteBusy}
+                className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-terracotta-500 px-5 text-sm font-medium tracking-wide text-ivory-50 transition hover:bg-terracotta-400 disabled:opacity-60"
+              >
+                {deleteBusy ? <Loader2 size={16} className="animate-spin" /> : null} Supprimer
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </>
   );
 }

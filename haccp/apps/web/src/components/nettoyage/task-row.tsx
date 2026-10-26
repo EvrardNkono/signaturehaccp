@@ -1,4 +1,4 @@
-import { CheckCircle2, Circle, Clock } from "lucide-react";
+import { CheckCircle2, Circle, Clock, Pencil, Trash2 } from "lucide-react";
 import { CleaningTask, frequencyLabels } from "@/lib/nettoyage";
 import { hhmm } from "@/lib/time";
 
@@ -8,12 +8,17 @@ export function TaskRow({
   tz,
   disabled = false,
   onToggle,
+  onEdit,
+  onDelete,
 }: {
   task: CleaningTask;
   overdue: boolean;
   tz?: string;
   disabled?: boolean;
   onToggle: (id: string) => void;
+  /** Affichés uniquement pour les responsables. */
+  onEdit?: (task: CleaningTask) => void;
+  onDelete?: (task: CleaningTask) => void;
 }) {
   return (
     <div className="flex items-start gap-3 p-4">
@@ -66,6 +71,31 @@ export function TaskRow({
           )}
         </div>
       </div>
+
+      {(onEdit || onDelete) && (
+        <div className="flex shrink-0 items-center gap-1 pt-0.5">
+          {onEdit && (
+            <button
+              type="button"
+              onClick={() => onEdit(task)}
+              aria-label={`Modifier « ${task.title} »`}
+              className="flex h-11 w-11 items-center justify-center rounded-full text-ink-400 transition-colors hover:bg-ivory-200 hover:text-gold-600"
+            >
+              <Pencil size={17} strokeWidth={1.5} />
+            </button>
+          )}
+          {onDelete && (
+            <button
+              type="button"
+              onClick={() => onDelete(task)}
+              aria-label={`Supprimer « ${task.title} »`}
+              className="flex h-11 w-11 items-center justify-center rounded-full text-ink-400 transition-colors hover:bg-status-critical/10 hover:text-status-critical"
+            >
+              <Trash2 size={17} strokeWidth={1.5} />
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
