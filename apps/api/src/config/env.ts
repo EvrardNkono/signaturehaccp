@@ -43,6 +43,12 @@ const schema = z.object({
   JOBS_ENABLED: bool(true),
   SENSOR_OFFLINE_MINUTES: z.coerce.number().int().positive().default(45),
   SENSOR_LOW_BATTERY: z.coerce.number().int().min(1).max(100).default(15),
+  // Conservation des relevés de température : 0 = jamais supprimés (défaut), sinon 365 jours minimum (1 an).
+  READING_RETENTION_DAYS: z.coerce
+    .number()
+    .int()
+    .refine((v) => v === 0 || v >= 365, "READING_RETENTION_DAYS : 0 (conservation illimitée) ou 365 jours minimum")
+    .default(0),
 
   SEED_PASSWORD: z.string().min(8).default("Haccp2026!"),
 });

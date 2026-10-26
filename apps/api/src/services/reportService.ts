@@ -18,7 +18,7 @@ const fmtDateTime = (d: Date, tz: string) =>
   new Intl.DateTimeFormat("fr-FR", { timeZone: tz, dateStyle: "short", timeStyle: "short" }).format(d);
 
 /** Protège contre l'injection de formules dans Excel (cellules commençant par = + - @). */
-const csvCell = (v: string | number | undefined | null) => {
+export const csvCell = (v: string | number | undefined | null) => {
   let s = String(v ?? "");
   if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`;
   return `"${s.replace(/"/g, '""')}"`;

@@ -1,6 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 import { jsonPlugin } from "../utils/serialize";
 import { ReadingStatus } from "../domain/equipment";
+import { env } from "../config/env";
 
 export interface IReading {
   _id: Types.ObjectId;
@@ -30,6 +31,11 @@ const schema = new Schema<IReading>({
 });
 schema.index({ equipmentId: 1, at: -1 });
 schema.index({ establishmentId: 1, at: -1 });
+// Purge automatique par MongoDB (index TTL), uniquement si READING_RETENTION_DAYS > 0 (jamais en dessous d'un an).
+// Attention : modifier cette valeur sur une base existante impose de supprimer l'ancien index "at_1" (voir README).
+if (env.READING_RETENTION_DAYS > 0) {
+  schema.index({ at: 1 }, { expireAfterSeconds: env.READING_RETENTION_DAYS * 86_400 });
+}
 schema.plugin(jsonPlugin);
 
 export const Reading = model<IReading>("Reading", schema);

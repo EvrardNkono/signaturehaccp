@@ -5,6 +5,7 @@ import { Download, FileDown, Loader2, Printer } from "lucide-react";
 import { Topbar } from "@/components/layout/topbar";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PeriodExport } from "@/components/rapports/period-export";
 import { ErrorBox, InlineError, Loading } from "@/components/ui/state";
 import { useApi } from "@/hooks/use-api";
 import { downloadFile, errorMessage } from "@/lib/api";
@@ -197,6 +198,8 @@ export default function RapportsPage() {
           </div>
           <InlineError message={exportError} />
         </Card>
+
+        <PeriodExport equipments={equipments} tz={tz} />
 
         {/* Synthèse */}
         <section className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-5">
