@@ -44,7 +44,7 @@ export default function EquipementsPage() {
       <Topbar title="Équipements" subtitle={`${items.length} équipements surveillés`} />
       <main className="mx-auto w-full max-w-[1400px] space-y-6 p-4 md:p-8 xl:p-10">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="relative md:max-w-xs md:flex-1">
+          <div data-tour="eq-search" className="relative md:max-w-xs md:flex-1">
             <Search size={16} strokeWidth={1.5} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-ink-400" />
             <input
               value={query}
@@ -54,7 +54,7 @@ export default function EquipementsPage() {
             />
           </div>
           {canWrite && (
-            <Button onClick={() => setOpen(true)}>
+            <Button data-tour="eq-add" onClick={() => setOpen(true)}>
               <Plus size={16} strokeWidth={1.75} /> Ajouter un équipement
             </Button>
           )}
@@ -86,7 +86,7 @@ export default function EquipementsPage() {
             <p className="mt-2 text-sm text-ink-500">Modifiez votre recherche ou ajoutez un équipement.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          <div data-tour="eq-list" className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {visible.map((e) => (
               <Link key={e.id} href={`/equipements/${e.id}`} className="block">
                 <EquipmentCard equipment={e} />

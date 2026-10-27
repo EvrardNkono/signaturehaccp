@@ -167,7 +167,7 @@ export default function RapportsPage() {
         </div>
 
         {/* Actions */}
-        <Card className="space-y-4 p-5 md:p-6 print:hidden">
+        <Card data-tour="rap-actions" className="space-y-4 p-5 md:p-6 print:hidden">
           <p className="text-sm text-ink-500">
             Registre du <span className="font-medium text-ink-900">{longDate}</span>. Choisissez les sections à inclure.
           </p>
@@ -202,7 +202,7 @@ export default function RapportsPage() {
         <PeriodExport equipments={equipments} tz={tz} />
 
         {/* Synthèse */}
-        <section className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-5">
+        <section data-tour="rap-summary" className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-5">
           <Card tone="dark" className="print-card lg:col-span-2">
             <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-gold-400">Conformité du jour</p>
             <p className="mt-4 font-display text-6xl font-semibold">

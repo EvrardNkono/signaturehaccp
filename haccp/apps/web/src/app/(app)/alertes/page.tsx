@@ -86,7 +86,7 @@ export default function AlertesPage() {
           <div className="ornament mt-4 max-w-xs" />
         </div>
 
-        <section className="grid grid-cols-3 gap-3 md:gap-6">
+        <section data-tour="al-summary" className="grid grid-cols-3 gap-3 md:gap-6">
           {(["critical", "warn", "info"] as AlertSeverity[]).map((s) => (
             <Card key={s} className="p-4 md:p-5">
               <p className="text-xs text-ink-500">{severityLabels[s]}</p>
@@ -122,7 +122,7 @@ export default function AlertesPage() {
         ) : visible.length === 0 ? (
           <Card className="p-8 text-center text-sm text-ink-500">Aucune alerte à afficher.</Card>
         ) : (
-          <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <section data-tour="al-list" className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {visible.map((a) => (
               <AlertCard
                 key={a.id}

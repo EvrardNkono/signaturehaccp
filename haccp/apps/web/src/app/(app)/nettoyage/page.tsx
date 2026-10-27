@@ -122,13 +122,13 @@ export default function NettoyagePage() {
           <h1 className="mt-1 font-display text-4xl font-semibold md:text-5xl">Nettoyage</h1>
           <div className="ornament mt-4 max-w-xs" />
           {canManage && (
-            <Button onClick={openCreate} className="mt-5">
+            <Button data-tour="net-add" onClick={openCreate} className="mt-5">
               <Plus size={16} strokeWidth={1.75} /> Ajouter une tâche
             </Button>
           )}
         </div>
 
-        <Card className="p-5 md:p-6">
+        <Card data-tour="net-progress" className="p-5 md:p-6">
           <div className="flex items-baseline justify-between gap-3">
             <p className="eyebrow">Avancement du jour</p>
             <p className="font-display text-2xl font-semibold">
@@ -179,7 +179,7 @@ export default function NettoyagePage() {
           </Card>
         ) : (
           zones.map((zone) => (
-            <section key={zone}>
+            <section key={zone} data-tour="net-zone">
               <h2 className="mb-3 text-2xl font-semibold">{zone}</h2>
               <Card className="divide-y divide-ivory-200 p-0">
                 {visible

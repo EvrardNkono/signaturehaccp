@@ -118,7 +118,7 @@ export default function DashboardPage() {
 
         {/* État global */}
         <section className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-5">
-          <Card tone="dark" className="lg:col-span-2">
+          <Card tone="dark" data-tour="dash-score" className="lg:col-span-2">
             <p className="text-[11px] font-medium uppercase tracking-[0.28em] text-gold-400">
               Score de conformité
             </p>
@@ -138,7 +138,7 @@ export default function DashboardPage() {
             </div>
           </Card>
 
-          <Card className="lg:col-span-3">
+          <Card data-tour="dash-progress" className="lg:col-span-3">
             <p className="eyebrow">Aujourd'hui</p>
             <h2 className="mt-1 text-2xl font-semibold">Avancement du jour</h2>
             <ul className="mt-6 space-y-5">
@@ -163,7 +163,7 @@ export default function DashboardPage() {
         </section>
 
         {/* Détail */}
-        <section>
+        <section data-tour="dash-equipments">
           <div className="mb-4 flex items-end justify-between gap-4">
             <div>
               <p className="eyebrow">Surveillance</p>

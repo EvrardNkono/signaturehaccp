@@ -119,7 +119,7 @@ export default function RelevesPage() {
           <div className="ornament mt-4 max-w-xs" />
         </div>
 
-        <section className="grid grid-cols-3 gap-3 md:gap-6">
+        <section data-tour="rel-summary" className="grid grid-cols-3 gap-3 md:gap-6">
           {(["ok", "warn", "critical"] as ReadingStatus[]).map((s) => (
             <Card key={s} className="p-4 md:p-5">
               <p className="text-xs text-ink-500">{statusLabels[s]}</p>
@@ -131,7 +131,7 @@ export default function RelevesPage() {
         </section>
 
         {canWrite && (
-        <section>
+        <section data-tour="rel-new">
           <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Nouveau relevé</h2>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
             {equipments.map((e) => {
@@ -194,7 +194,7 @@ export default function RelevesPage() {
         </section>
         )}
 
-        <section>
+        <section data-tour="rel-history">
           <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Historique du jour</h2>
           <Card className="divide-y divide-ivory-200 p-0">
             {readings.length === 0 && <p className="p-6 text-center text-sm text-ink-500">Aucun relevé aujourd&apos;hui.</p>}

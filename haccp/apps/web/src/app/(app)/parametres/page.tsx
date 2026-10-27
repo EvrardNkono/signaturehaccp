@@ -153,7 +153,7 @@ export default function ParametresPage() {
         </div>
 
         {/* Établissement */}
-        <Card className="p-5 md:p-6">
+        <Card data-tour="par-estab" className="p-5 md:p-6">
           <h2 className="text-2xl font-semibold">Établissement</h2>
           <p className="mt-1 text-sm text-ink-500">Ces informations apparaissent sur les rapports imprimés.</p>
           <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -179,7 +179,7 @@ export default function ParametresPage() {
         </Card>
 
         {/* Seuils */}
-        <Card className="p-5 md:p-6">
+        <Card data-tour="par-thresholds" className="p-5 md:p-6">
           <h2 className="text-2xl font-semibold">Seuils par défaut</h2>
           <p className="mt-1 text-sm text-ink-500">
             Valeurs de référence courantes, à adapter à votre plan de maîtrise sanitaire.
@@ -257,7 +257,7 @@ export default function ParametresPage() {
         <InlineError message={serverError} />
         {canWrite && (
         <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-          <Button onClick={save} disabled={!dirty || busy} className="w-full sm:w-auto">
+          <Button data-tour="par-save" onClick={save} disabled={!dirty || busy} className="w-full sm:w-auto">
             {busy ? <Loader2 size={16} className="animate-spin" /> : null} Enregistrer les paramètres
           </Button>
           <Button variant="secondary" onClick={reset} disabled={!dirty} className="w-full sm:w-auto">

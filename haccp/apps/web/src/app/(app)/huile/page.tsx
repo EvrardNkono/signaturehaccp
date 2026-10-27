@@ -104,7 +104,7 @@ export default function HuilePage() {
           <div className="ornament mt-4 max-w-xs" />
         </div>
 
-        <Card className="p-5 md:p-6">
+        <Card data-tour="huile-summary" className="p-5 md:p-6">
           <div className="flex items-baseline justify-between gap-3">
             <p className="eyebrow">Avancement du jour</p>
             <p className="font-display text-2xl font-semibold">
@@ -122,7 +122,7 @@ export default function HuilePage() {
           )}
         </Card>
 
-        <section>
+        <section data-tour="huile-new">
           <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Nouveau contrôle</h2>
           {fryers.length === 0 ? (
             <Card className="p-8 text-center text-sm text-ink-500">Aucune friteuse dans vos équipements.</Card>
@@ -143,7 +143,7 @@ export default function HuilePage() {
           )}
         </section>
 
-        <section>
+        <section data-tour="huile-history">
           <h2 className="mb-4 text-2xl font-semibold md:text-3xl">Historique</h2>
           {history.length === 0 ? (
             <Card className="p-8 text-center text-sm text-ink-500">Aucun contrôle récent.</Card>

@@ -123,7 +123,7 @@ export default function TracabilitePage() {
           <div className="ornament mt-4 max-w-xs" />
         </div>
 
-        <section className="grid grid-cols-3 gap-3 md:gap-6">
+        <section data-tour="lot-summary" className="grid grid-cols-3 gap-3 md:gap-6">
           <Card className="p-4 md:p-5">
             <p className="text-xs text-ink-500">Périmés</p>
             <p className="mt-1 font-display text-3xl font-semibold text-status-critical md:text-4xl">{expired}</p>
@@ -148,7 +148,7 @@ export default function TracabilitePage() {
           (showForm ? (
             <LotForm onSubmit={add} onCancel={() => setShowForm(false)} />
           ) : (
-            <Button onClick={() => setShowForm(true)}>
+            <Button data-tour="lot-add" onClick={() => setShowForm(true)}>
               <Plus size={16} strokeWidth={1.75} /> Nouvelle réception
             </Button>
           ))}
@@ -174,7 +174,7 @@ export default function TracabilitePage() {
         ) : visible.length === 0 ? (
           <Card className="p-8 text-center text-sm text-ink-500">Aucun lot à afficher.</Card>
         ) : (
-          <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          <section data-tour="lot-list" className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {visible.map((l) => {
               const days = l.daysLeft;
               const status = l.dlcStatus ?? "ok";

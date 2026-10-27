@@ -161,13 +161,13 @@ export default function UtilisateursPage() {
           />
         ) : (
           canWrite && (
-            <Button onClick={() => { setMessage(null); setEditing("new"); }}>
+            <Button data-tour="usr-add" onClick={() => { setMessage(null); setEditing("new"); }}>
               <Plus size={16} strokeWidth={1.75} /> Ajouter un utilisateur
             </Button>
           )
         )}
 
-        <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <section data-tour="usr-list" className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {users.map((u) => (
             <Card key={u.id} className={`p-5 ${u.active ? "" : "opacity-60"}`}>
               <div className="flex items-start gap-4">
@@ -240,7 +240,7 @@ export default function UtilisateursPage() {
           ))}
         </section>
 
-        <section>
+        <section data-tour="usr-roles">
           <h2 className="mb-3 text-2xl font-semibold">Droits par rôle</h2>
           <Card className="overflow-x-auto p-0">
             <table className="w-full min-w-[640px] text-left text-sm">
