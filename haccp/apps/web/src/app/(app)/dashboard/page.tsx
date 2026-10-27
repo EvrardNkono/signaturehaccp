@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { ScoreRing } from "@/components/ui/score-ring";
 import { Sparkline } from "@/components/ui/sparkline";
 import { ErrorBox, Loading } from "@/components/ui/state";
+import { SetupChecklist } from "@/components/guide/setup-checklist";
 import { useApi } from "@/hooks/use-api";
 import { useSession } from "@/lib/session";
 import { Equipment, Status, formatRange, formatTemp, getStatus } from "@/lib/equipment";
@@ -78,6 +79,8 @@ export default function DashboardPage() {
           <p className="mt-1 font-display text-4xl font-semibold md:text-5xl">Bonjour {user?.firstName}</p>
           <div className="ornament mt-4 max-w-xs" />
         </div>
+
+        <SetupChecklist />
 
         {/* Urgence */}
         {critical && (

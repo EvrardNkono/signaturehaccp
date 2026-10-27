@@ -3,6 +3,7 @@
  *   npm run seed            → refuse si la base contient déjà des utilisateurs
  *   npm run seed -- --reset → vide les collections de l'application puis recrée le jeu de démonstration
  */
+import dns from "node:dns";
 import { connectDb, disconnectDb } from "../config/db";
 import { env, isProd } from "../config/env";
 import {
@@ -14,6 +15,10 @@ import { statusForValue } from "../domain/equipment";
 import { getOilStatus } from "../domain/oil";
 import { isoWeekKey, nowInTz } from "../domain/time";
 import { formatRange, formatTemp } from "../domain/format";
+
+// Même contournement que src/server.ts : sur certains PC / réseaux, le DNS refuse les requêtes SRV d'Atlas
+// (erreur « querySrv ECONNREFUSED »). Hors production uniquement.
+if (!isProd) dns.setServers(["8.8.8.8", "1.1.1.1"]);
 
 const reset = process.argv.includes("--reset");
 const force = process.argv.includes("--force");

@@ -58,6 +58,7 @@ export function Sidebar({ open, onClose }: { open: boolean; onClose: () => void 
               <Link
                 key={item.href}
                 href={item.href}
+                data-guide={item.module}
                 onClick={onClose}
                 className={`relative flex items-center gap-3 rounded-xl px-4 py-3 text-sm transition ${
                   active

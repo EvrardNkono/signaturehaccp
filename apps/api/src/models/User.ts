@@ -1,6 +1,7 @@
 import { Schema, model, Types } from "mongoose";
 import { jsonPlugin } from "../utils/serialize";
 import { USER_ROLES, UserRole } from "../domain/permissions";
+import { GUIDE_STATUSES, GuideStatus } from "../domain/guide";
 
 export interface IUser {
   _id: Types.ObjectId;
@@ -19,6 +20,14 @@ export interface IUser {
   passwordResetTokenHash?: string | null;
   passwordResetExpires?: Date | null;
   mustChangePassword: boolean;
+  /** Guide d'utilisation : progression propre à chaque utilisateur. */
+  guide: {
+    status: GuideStatus;
+    seenSteps: string[];
+    checklistHidden: boolean;
+    lastStartedAt?: Date | null;
+    updatedAt?: Date | null;
+  };
   createdAt: Date;
   updatedAt: Date;
 }
@@ -40,6 +49,13 @@ const schema = new Schema<IUser>(
     passwordResetTokenHash: { type: String, default: null, index: true },
     passwordResetExpires: { type: Date, default: null },
     mustChangePassword: { type: Boolean, default: false },
+    guide: {
+      status: { type: String, enum: GUIDE_STATUSES, default: "active" },
+      seenSteps: { type: [String], default: [] },
+      checklistHidden: { type: Boolean, default: false },
+      lastStartedAt: { type: Date, default: null },
+      updatedAt: { type: Date, default: null },
+    },
   },
   { timestamps: true }
 );

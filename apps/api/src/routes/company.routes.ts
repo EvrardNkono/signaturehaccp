@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { AuditLog, Company } from "../models";
+import { AuditLog, Company, DocumentModel, Equipment, Establishment, User } from "../models";
 import { getAuth, requireAccess } from "../middleware/auth";
 import { hasAccess } from "../domain/permissions";
 import { forbidden, notFound } from "../utils/httpError";
@@ -12,12 +12,43 @@ const router = Router();
 
 export const ONBOARDING_STEPS = ["establishment", "equipments", "team", "thresholds", "document"] as const;
 
+/**
+ * Étapes de démarrage déjà accomplies d'après les données réelles de l'entreprise (rien à cocher à la main).
+ * Une étape reste aussi valide si un administrateur l'a confirmée à la main (PUT).
+ */
+async function detectSteps(companyId: string): Promise<string[]> {
+  const cid = new Types.ObjectId(companyId);
+  const estIds = (await Establishment.find({ companyId: cid, active: true }).select("_id")).map((e) => e._id);
+  const detected: string[] = [];
+  if (estIds.length > 0) detected.push("establishment");
+  if (estIds.length === 0) return detected;
+
+  const [equipments, members, thresholds, documents] = await Promise.all([
+    Equipment.countDocuments({ establishmentId: { $in: estIds }, archived: false }),
+    User.countDocuments({ companyId: cid, active: true }),
+    AuditLog.countDocuments({ companyId: cid, action: "equipment.thresholds_change" }),
+    DocumentModel.countDocuments({ establishmentId: { $in: estIds }, archived: false }),
+  ]);
+  if (equipments > 0) detected.push("equipments");
+  if (members > 1) detected.push("team");
+  if (thresholds > 0) detected.push("thresholds");
+  if (documents > 0) detected.push("document");
+  return detected;
+}
+
 router.get("/onboarding", async (req, res) => {
   const { companyId } = getAuth(req);
   const company = await Company.findById(companyId);
   if (!company) throw notFound();
   const done = company.onboarding?.completedSteps ?? [];
-  res.json({ steps: ONBOARDING_STEPS, completedSteps: done, completed: ONBOARDING_STEPS.every((s) => done.includes(s)) });
+  const detected = await detectSteps(companyId);
+  const all = new Set([...done, ...detected]);
+  res.json({
+    steps: ONBOARDING_STEPS,
+    completedSteps: done,
+    detectedSteps: detected,
+    completed: ONBOARDING_STEPS.every((s) => all.has(s)),
+  });
 });
 
 const stepSchema = z.object({ completedSteps: z.array(z.enum(ONBOARDING_STEPS)).max(ONBOARDING_STEPS.length) });
@@ -28,7 +59,9 @@ router.put("/onboarding", async (req, res) => {
   const { completedSteps } = stepSchema.parse(req.body);
   const unique = [...new Set(completedSteps)];
   await Company.updateOne({ _id: companyId }, { $set: { "onboarding.completedSteps": unique } });
-  res.json({ steps: ONBOARDING_STEPS, completedSteps: unique, completed: ONBOARDING_STEPS.every((s) => unique.includes(s)) });
+  const detected = await detectSteps(companyId);
+  const all = new Set([...unique, ...detected]);
+  res.json({ steps: ONBOARDING_STEPS, completedSteps: unique, detectedSteps: detected, completed: ONBOARDING_STEPS.every((s) => all.has(s)) });
 });
 
 /** Journal d'audit de l'entreprise (lecture : administrateurs et contrôleurs externes via le module "rapports"). */

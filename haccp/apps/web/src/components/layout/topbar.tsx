@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { Bell } from "lucide-react";
+import { BookOpen, Bell } from "lucide-react";
 import { fullName, roleLabelsFr, useSession } from "@/lib/session";
+import { useGuide } from "@/components/guide/guide-provider";
 
 export function Topbar({ title, subtitle }: { title: string; subtitle?: string }) {
   const { user, alerts, can } = useSession();
+  const { openMenu } = useGuide();
   const initial = (user?.firstName?.[0] ?? "?").toUpperCase();
 
   return (
@@ -16,6 +18,14 @@ export function Topbar({ title, subtitle }: { title: string; subtitle?: string }
           {subtitle && <p className="truncate text-xs text-ink-500 md:text-sm">{subtitle}</p>}
         </div>
         <div className="flex items-center gap-3">
+          <button
+            onClick={openMenu}
+            aria-label="Guide d'utilisation"
+            title="Guide d'utilisation"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-ivory-300 bg-white text-ink-700 transition hover:border-gold-400"
+          >
+            <BookOpen size={18} strokeWidth={1.5} />
+          </button>
           {can("alertes") && (
             <Link
               href="/alertes"

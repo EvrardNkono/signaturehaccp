@@ -4,6 +4,7 @@ import authRoutes from "./auth.routes";
 import establishmentRoutes from "./establishments.routes";
 import userRoutes from "./users.routes";
 import companyRoutes from "./company.routes";
+import meRoutes from "./me.routes";
 import iotRoutes from "./iot.routes";
 
 const api = Router();
@@ -17,5 +18,6 @@ api.use(authenticate, originGuard);
 api.use("/establishments", establishmentRoutes);
 api.use("/users", userRoutes);
 api.use("/company", companyRoutes);
+api.use("/me", meRoutes);
 
 export default api;
